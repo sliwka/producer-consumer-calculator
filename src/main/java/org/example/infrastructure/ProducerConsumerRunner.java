@@ -16,14 +16,14 @@ public class ProducerConsumerRunner {
 
     private static final Logger logger = Logger.getLogger(TaskConsumerThread.class.getName());
 
-    private final BlockingQueue<Task> taskQueue;
+    private final HalfBlockingQueue<Task> taskQueue;
     private final ThroughputMetrics throughputMetrics;
     private final List<TaskProducerThread> producerThreads;
     private final List<TaskConsumerThread> consumerThreads;
 
     public ProducerConsumerRunner(int producerThreadsCount, int consumerThreadsCount, int queueCapacity,
                                   TaskProducer taskProducer, TaskConsumer taskConsumer) {
-        taskQueue = new ArrayBlockingQueue<>(queueCapacity);
+        taskQueue = new HalfBlockingQueue<>(queueCapacity);
         throughputMetrics = new ThroughputMetrics();
         producerThreads = IntStream.range(0, producerThreadsCount)
                 .mapToObj(i -> new TaskProducerThread("Producer-%d".formatted(i), taskQueue,

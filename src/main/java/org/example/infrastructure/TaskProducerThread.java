@@ -10,11 +10,11 @@ public class TaskProducerThread extends Thread {
 
     private static final Logger logger = Logger.getLogger(TaskProducerThread.class.getName());
 
-    private final BlockingQueue<Task> taskQueue;
+    private final HalfBlockingQueue<Task> taskQueue;
     private final TaskProducer taskProducer;
     private int taskCounter = 0;
 
-    public TaskProducerThread(String name, BlockingQueue<Task> taskQueue, TaskProducer taskProducer) {
+    public TaskProducerThread(String name, HalfBlockingQueue<Task> taskQueue, TaskProducer taskProducer) {
         super(name);
         this.taskQueue = taskQueue;
         this.taskProducer = taskProducer;

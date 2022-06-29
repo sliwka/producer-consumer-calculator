@@ -10,11 +10,11 @@ public class TaskConsumerThread extends Thread {
 
     private static final Logger logger = Logger.getLogger(TaskConsumerThread.class.getName());
 
-    private final BlockingQueue<Task> taskQueue;
+    private final HalfBlockingQueue<Task> taskQueue;
     private final TaskConsumer taskConsumer;
     private final ThroughputMetrics throughputMetrics;
 
-    public TaskConsumerThread(String name, BlockingQueue<Task> taskQueue, TaskConsumer taskConsumer,
+    public TaskConsumerThread(String name, HalfBlockingQueue<Task> taskQueue, TaskConsumer taskConsumer,
                               ThroughputMetrics throughputMetrics) {
         super(name);
         this.taskQueue = taskQueue;
