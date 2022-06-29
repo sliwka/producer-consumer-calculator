@@ -27,9 +27,9 @@ public class TaskConsumerThread extends Thread {
         logger.info("%s started".formatted(getName()));
         while (!isInterrupted()) {
             try {
-                logger.fine("%s polling...".formatted(getName()));
+//                logger.fine("%s polling...".formatted(getName()));
                 Task task = taskQueue.take();
-                logger.fine("%s polled %s".formatted(getName(), task.toString()));
+//                logger.fine("%s polled %s".formatted(getName(), task.toString()));
                 taskConsumer.consume(task);
                 throughputMetrics.incrementConsumedTasksCount();
             } catch (InterruptedException e) {

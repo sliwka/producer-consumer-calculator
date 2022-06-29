@@ -15,14 +15,6 @@ import java.util.logging.Logger;
 
 public class Main {
 
-    private static final Logger logger = Logger.getLogger(Main.class.getName());
-    private static final int PRODUCER_THREADS_COUNT = 2;
-    private static final int CONSUMER_THREADS_COUNT = 4;
-    private static final int QUEUE_CAPACITY = 5;
-    private static final int PRODUCER_DELAY_MILLISECONDS = 100;
-    private static final int CONSUMER_DELAY_MILLISECONDS = 100;
-    public static final int RUN_DURATION_SECONDS = 4;
-
     static {
         String path = Main.class
                 .getClassLoader()
@@ -30,6 +22,15 @@ public class Main {
                 .getFile();
         System.setProperty("java.util.logging.config.file", path);
     }
+
+    private static final Logger logger = Logger.getLogger(Main.class.getName());
+    private static final int PRODUCER_THREADS_COUNT = 8;
+    private static final int CONSUMER_THREADS_COUNT = 8;
+    private static final int QUEUE_CAPACITY = 8;
+    private static final int PRODUCER_DELAY_MILLISECONDS = 100;
+    private static final int CONSUMER_DELAY_MILLISECONDS = 300;
+
+    public static final int RUN_DURATION_SECONDS = 10;
 
     public static void main(String[] args) {
         ThroughputMetrics throughputMetrics = new ThroughputMetrics();
