@@ -21,6 +21,7 @@ public class Main {
     private static final int QUEUE_CAPACITY = 5;
     private static final int PRODUCER_DELAY_MILLISECONDS = 100;
     private static final int CONSUMER_DELAY_MILLISECONDS = 100;
+    public static final int RUN_DURATION_SECONDS = 4;
 
     static {
         String path = Main.class
@@ -41,17 +42,16 @@ public class Main {
 
         producerConsumerRunner.run();
 
-        int runDurationSeconds = 4;
         try {
-            Thread.sleep(Duration.ofSeconds(runDurationSeconds).toMillis());
+            Thread.sleep(Duration.ofSeconds(RUN_DURATION_SECONDS).toMillis());
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
 
-        logger.info("throughput: %f tasks/s"
-                .formatted((float)throughputMetrics.getConsumedTasksCount() / runDurationSeconds));
-
         producerConsumerRunner.stop();
+
+        logger.info("throughput: %f tasks/s"
+                .formatted((float)throughputMetrics.getConsumedTasksCount() / RUN_DURATION_SECONDS));
     }
 
     private static TaskProducer createTaskProducer(int delayMilliseconds) {
