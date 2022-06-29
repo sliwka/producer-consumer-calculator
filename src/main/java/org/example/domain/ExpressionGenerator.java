@@ -14,44 +14,25 @@ public class ExpressionGenerator {
     }
 
     public String generateExpression() {
-        int length = randomSupplier.get().nextInt(30) + 1;
-        StringBuilder stringBuilder = new StringBuilder(length);
-        char prevChar = '+';
-        int endingDigitsCount = 0;
-        for (int i = 0; i < length; i++) {
-            char c = randomChar(prevChar, endingDigitsCount);
-            stringBuilder.append(c);
-            if (isDigit(c)) {
-                endingDigitsCount++;
-            } else {
-                endingDigitsCount = 0;
+        int componentsCount = randomSupplier.get().nextInt(10) + 1;
+        StringBuilder stringBuilder = new StringBuilder();
+        if (randomSupplier.get().nextFloat() < 0.3) {
+            stringBuilder.append('-');
+        }
+        for (int i = 0; i < componentsCount; i++) {
+            stringBuilder.append(randomNumber());
+            if (i < componentsCount - 1) {
+                stringBuilder.append(randomOperator());
             }
-            prevChar = c;
         }
-        String expression = stringBuilder.toString();
-        if (isOperator(expression.charAt(expression.length() - 1))) {
-            expression = expression.substring(0, expression.length() - 1);
-        }
-        return expression;
+        return stringBuilder.toString();
     }
 
-    private boolean isDigit(char c) {
-        return DIGITS.contains("" + c);
+    private int randomNumber() {
+        return randomSupplier.get().nextInt(10000);
     }
 
-    private boolean isOperator(char c) {
-        return OPERATORS.contains("" + c);
-    }
-
-    private char randomChar(char prevChar, int endingDigitsCount) {
-        String charSetToRandom;
-        if (isOperator(prevChar)) {
-            charSetToRandom = DIGITS_WITHOUT_ZERO;
-        } else if (endingDigitsCount >= 9) {
-            charSetToRandom = OPERATORS;
-        } else {
-            charSetToRandom = SYMBOLS;
-        }
-        return charSetToRandom.charAt(randomSupplier.get().nextInt(charSetToRandom.length()));
+    private char randomOperator() {
+        return OPERATORS.charAt(randomSupplier.get().nextInt(OPERATORS.length()));
     }
 }
