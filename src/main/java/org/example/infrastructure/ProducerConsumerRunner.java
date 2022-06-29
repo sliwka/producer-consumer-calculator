@@ -4,10 +4,7 @@ import org.example.tasks.Task;
 import org.example.tasks.TaskConsumer;
 import org.example.tasks.TaskProducer;
 
-import java.time.Duration;
 import java.util.List;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -22,34 +19,29 @@ public class ProducerConsumerRunner {
     private final List<TaskConsumerThread> consumerThreads;
 
     public ProducerConsumerRunner(int producerThreadsCount, int consumerThreadsCount, int queueCapacity,
+                                  ThroughputMetrics throughputMetrics,
                                   TaskProducer taskProducer, TaskConsumer taskConsumer) {
+        this.throughputMetrics = throughputMetrics;
         taskQueue = new HalfBlockingQueue<>(queueCapacity);
-        throughputMetrics = new ThroughputMetrics();
         producerThreads = IntStream.range(0, producerThreadsCount)
                 .mapToObj(i -> new TaskProducerThread("Producer-%d".formatted(i), taskQueue,
                         taskProducer))
                 .collect(Collectors.toList());
         consumerThreads = IntStream.range(0, consumerThreadsCount)
                 .mapToObj(i -> new TaskConsumerThread("Consumer-%d".formatted(i), taskQueue,
-                        taskConsumer, throughputMetrics))
+                        taskConsumer, this.throughputMetrics))
                 .collect(Collectors.toList());
         logger.info("created %d producer(s) and %d consumer(s)".formatted(producerThreads.size(), consumerThreads.size()));
     }
 
-    public void run(int runDurationSeconds) {
+    public void run() {
         producerThreads.forEach(TaskProducerThread::start);
         consumerThreads.forEach(TaskConsumerThread::start);
 
-        try {
-            Thread.sleep(Duration.ofSeconds(runDurationSeconds).toMillis());
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+    }
 
-        logger.info("throughput: %f tasks/s"
-                .formatted((float)throughputMetrics.getConsumedTasksCount() / runDurationSeconds));
-
-        logger.info("interrupting all...");
+    public void stop() {
+        logger.info("interrupting runner...");
         producerThreads.forEach(Thread::interrupt);
         consumerThreads.forEach(Thread::interrupt);
         logger.info("interrupted");

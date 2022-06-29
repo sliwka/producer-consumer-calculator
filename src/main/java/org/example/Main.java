@@ -1,5 +1,6 @@
 package org.example;
 
+import org.example.infrastructure.ThroughputMetrics;
 import org.example.tasks.ComputationReporter;
 import org.example.tasks.InterruptableRunnable;
 import org.example.tasks.TaskConsumer;
@@ -8,9 +9,18 @@ import org.example.domain.ExpressionGenerator;
 import org.example.domain.Parser;
 import org.example.infrastructure.ProducerConsumerRunner;
 
+import java.time.Duration;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.logging.Logger;
 
 public class Main {
+
+    private static final Logger logger = Logger.getLogger(Main.class.getName());
+    private static final int PRODUCER_THREADS_COUNT = 2;
+    private static final int CONSUMER_THREADS_COUNT = 4;
+    private static final int QUEUE_CAPACITY = 5;
+    private static final int PRODUCER_DELAY_MILLISECONDS = 100;
+    private static final int CONSUMER_DELAY_MILLISECONDS = 100;
 
     static {
         String path = Main.class
@@ -21,10 +31,27 @@ public class Main {
     }
 
     public static void main(String[] args) {
-        new ProducerConsumerRunner(2, 4, 5,
-                createTaskProducer(100),
-                createTaskConsumer(100))
-                .run(4);
+        ThroughputMetrics throughputMetrics = new ThroughputMetrics();
+
+        ProducerConsumerRunner producerConsumerRunner = new ProducerConsumerRunner(
+                PRODUCER_THREADS_COUNT, CONSUMER_THREADS_COUNT, QUEUE_CAPACITY,
+                throughputMetrics,
+                createTaskProducer(PRODUCER_DELAY_MILLISECONDS),
+                createTaskConsumer(CONSUMER_DELAY_MILLISECONDS));
+
+        producerConsumerRunner.run();
+
+        int runDurationSeconds = 4;
+        try {
+            Thread.sleep(Duration.ofSeconds(runDurationSeconds).toMillis());
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        logger.info("throughput: %f tasks/s"
+                .formatted((float)throughputMetrics.getConsumedTasksCount() / runDurationSeconds));
+
+        producerConsumerRunner.stop();
     }
 
     private static TaskProducer createTaskProducer(int delayMilliseconds) {
