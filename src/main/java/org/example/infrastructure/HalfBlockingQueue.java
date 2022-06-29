@@ -19,7 +19,7 @@ public class HalfBlockingQueue<T>  {
 
     public T take() throws InterruptedException {
         T element = queue.take();
-        logger.info("TAKEN,   size=%d".formatted(queue.size()));
+        logger.fine("TAKEN,   size=%d".formatted(queue.size()));
         notifyIfQueueIsAtLeastHalfEmpty();
         return element;
     }
@@ -29,12 +29,12 @@ public class HalfBlockingQueue<T>  {
         synchronized (this) {
             try {
                 queue.add(element);
-                logger.info("ADDED,   size=%d".formatted(queue.size()));
+                logger.fine("ADDED,   size=%d".formatted(queue.size()));
             } catch (IllegalStateException e) {
-                logger.info("WAITING");
+                logger.fine("WAITING");
                 waitForQueueBeingAtLeasHalfEmpty();
                 queue.offer(element);
-                logger.info("OFFERED, size=%d".formatted(queue.size()));
+                logger.fine("OFFERED, size=%d".formatted(queue.size()));
             }
         }
     }
