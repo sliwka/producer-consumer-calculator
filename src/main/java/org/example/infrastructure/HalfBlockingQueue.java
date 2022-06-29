@@ -20,16 +20,12 @@ public class HalfBlockingQueue<T>  {
     public T take() throws InterruptedException {
         T element = queue.take();
         logger.info("TAKEN,   size=%d".formatted(queue.size()));
-        if (queue.size() <= halfOfQueueCapacity) {
-            notifyThatQueueIsAtLeastHalfEmpty();
-        }
+        notifyIfQueueIsAtLeastHalfEmpty();
         return element;
     }
 
     public void offer(T element) throws InterruptedException {
-        if (queue.size() <= halfOfQueueCapacity) {
-            notifyThatQueueIsAtLeastHalfEmpty();
-        }
+        notifyIfQueueIsAtLeastHalfEmpty();
         synchronized (this) {
             try {
                 queue.add(element);
@@ -49,9 +45,11 @@ public class HalfBlockingQueue<T>  {
         }
     }
 
-    private void notifyThatQueueIsAtLeastHalfEmpty() {
-        synchronized (halfEmptyMonitor) {
-            halfEmptyMonitor.notify();
+    private void notifyIfQueueIsAtLeastHalfEmpty() {
+        if (queue.size() <= halfOfQueueCapacity) {
+            synchronized (halfEmptyMonitor) {
+                halfEmptyMonitor.notify();
+            }
         }
     }
 }
