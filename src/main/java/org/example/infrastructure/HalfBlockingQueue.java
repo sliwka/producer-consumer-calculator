@@ -39,6 +39,10 @@ public class HalfBlockingQueue<T>  {
         }
     }
 
+    public int size() {
+        return queue.size();
+    }
+
     private void waitForQueueBeingAtLeasHalfEmpty() throws InterruptedException {
         synchronized (halfEmptyMonitor) {
             halfEmptyMonitor.wait();
