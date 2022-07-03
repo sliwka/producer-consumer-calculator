@@ -7,6 +7,9 @@ import static org.example.domain.Symbols.*;
 
 public class ExpressionGenerator {
 
+    public static final int MAX_COMPONENTS_COUNT = 10;
+    public static final double FIRST_COMPONENT_WITH_MINUS_PROBABILITY = 0.3;
+
     private final Supplier<Random> randomSupplier;
 
     public ExpressionGenerator(Supplier<Random> randomSupplier) {
@@ -14,9 +17,9 @@ public class ExpressionGenerator {
     }
 
     public String generateExpression() {
-        int componentsCount = randomSupplier.get().nextInt(10) + 1;
+        int componentsCount = randomSupplier.get().nextInt(MAX_COMPONENTS_COUNT - 1) + 1;
         StringBuilder stringBuilder = new StringBuilder();
-        if (randomSupplier.get().nextFloat() < 0.3) {
+        if (randomSupplier.get().nextFloat() < FIRST_COMPONENT_WITH_MINUS_PROBABILITY) {
             stringBuilder.append('-');
         }
         for (int i = 0; i < componentsCount; i++) {
