@@ -36,8 +36,9 @@ public class ProducerConsumerRunner {
 
     public void run() {
         producerThreads.forEach(TaskProducerThread::start);
+        logger.info("producers started");
         consumerThreads.forEach(TaskConsumerThread::start);
-
+        logger.info("consumers started");
     }
 
     public void stop() {
