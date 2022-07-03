@@ -84,12 +84,12 @@ class HalfBlockingQueueTest {
         var queue = new HalfBlockingQueue<Integer>(capacity);
 
         // when
-        List<Integer> queueSizeHistory = new ArrayList<>();
+        List<Integer> queueSizeAfterOfferHistory = new ArrayList<>();
         Thread producer = new Thread(() -> {
             for (int i = 0; i < testElementsCount; i++) {
                 try {
                     queue.offer(i);
-                    queueSizeHistory.add(queue.size());
+                    queueSizeAfterOfferHistory.add(queue.size());
                     Thread.sleep(producerDurationMillis);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
@@ -117,8 +117,8 @@ class HalfBlockingQueueTest {
                 .matchWeakIncreasingInRange(1, capacity)
                 .matchWeakIncreasingInRange(capacity / 2 + 1, capacity)
                 .matchAnythingToTheEnd()
-                .matchInPrefix(queueSizeHistory),
-                "queue size history: " + queueSizeHistory);
+                .matchInPrefix(queueSizeAfterOfferHistory),
+                "queue size history: " + queueSizeAfterOfferHistory);
     }
 
     private boolean isWaiting(InterruptableRunnable o) {
